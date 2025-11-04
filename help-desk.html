@@ -1,0 +1,1040 @@
+<!-- Includes -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+<!--<link rel="stylesheet"
+    href="https://api.piyushagade.xyz/v1/cdn/fetch?path=/jquery/plugins/searchable-multi-select/dist/picker.css"><script src="https://api.piyushagade.xyz/v1/cdn/fetch?path=/jquery/plugins/searchable-multi-select/dist/picker.min.js">
+</script>-->
+<!-- Form handler lives Divi_CoE_Child -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-popup-overlay/2.1.5/jquery.popupoverlay.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-placeholder/2.3.1/jquery.placeholder.min.js"></script>
+<script src="https://raw.githubusercontent.com/chrisdickinson/bops/master/dist/bops.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld7B3UmAAAAAJc7x3-EWRX2OBEJchiZRYuRlCW8"></script>
+<!-- <script src="https://api.piyushagade.xyz/v1/cdn/fetch?path=/jquery/plugins/tagify/dist/tagify.js"></script><link rel="stylesheet" href="https://api.piyushagade.xyz/v1/cdn/fetch?path=/jquery/plugins/tagify/dist/tagify.css">  -->
+<script src="https://cdn.jsdelivr.net/npm/jquery-multiselect@1.0.0/jquery-MultiSelect.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/jquery-multiselect@1.0.0/jquery-MultiSelect.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@piyushagade/multiline-plus@1.0.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@piyushagade/excavator@1.0.0"></script>
+<style>
+  .popup_content {
+    margin: 10px;
+    padding: 0 10px;
+    max-width: 60%;
+    background: white;
+  }
+</style>
+<div class="well form-submission-success_popup" id="success_popup">
+  <h4 class="title">✅ Submission successful</h4>
+  <p class="message" style="padding-bottom: 2px;">Your form has been successfully submitted.
+  <p style="padding: 2px 10px; background: #dfdfdf; border-radius: 2px; font-size: 14px;">Submission reference #: <span class="reference-id" style="color: #d30c0c; font-weight: bold;"></span>
+    <button class="success_popup_close">Close</button>
+</div>
+<div class="well" id="error_popup">
+  <h4 class="title">⚠️ Submission failed</h4>
+  <div class="message">Something went wrong. Please try again.</div>
+  <button class="error_popup_close">Close</button>
+</div>
+<div class="well" id="busy_popup">
+  <h4 class="title">⌚ Uploading</h4>
+  <p class="message">Please wait while we process your request.
+</div>
+<!-- Form code -->
+<div class="form-container">
+  <div class="form-section">
+    <!-- Heading & Form selector -->
+    <div>
+      <h2>Submit a request</h2>
+      <p style="margin-top: -8px; margin-bottom: 10px;">To begin, select an option from the dropdown below.
+        <!-- List -->
+      <div>
+        <label for="request_category">Request Category</label>
+        <select class="form-selector-dropdown" name="request_category" placeholder="No category selected" required="" style="margin-bottom: 0;">
+          <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+          <option value="it-request">IT Request</option>
+          <option value="course-request">Online Course Support (Canvas)</option>
+          <option value="website-edits">Website Edits</option>
+          <option value="news-and-communications">News & Communications</option>
+          <option value="faculty-profile">Faculty Profile</option>
+          <option value="marketing-and-design">Marketing & Design</option>
+          <option value="photo-request">Photo Request</option>
+          <option value="video-studio-request">Video Studio Requests</option>
+          <option value="user-management">User Management</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- angela.epps@ufl.edu, iclontz@ufl.edu, jda@coe.ufl.edu, jamie.dale@coe.ufl.edu -->
+<div class="form-container">
+  <div class="form-section" style="margin-top: 20px;">
+    <div class="forms-list">
+      <!-- No category selected -->
+      <div class="no-category-selected-notification"> ⚠️ Please select a form category from the list above. </div>
+      <!-- ***** IT Request form ***** -->
+      <div class="form-parent hidden" category="it-request">
+        <!-- Form heading -->
+        <h3>IT Request Form</h3>
+        <form enctype="multipart/form-data">
+          <input type="hidden" name="recaptcha_response" id="recaptcha_response">
+          <div>
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" persistence-id="name" required="">
+          </div>
+          <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" persistence-id="email" required="">
+          </div>
+          <div>
+            <label for="department">Department *</label>
+            <input type="text" id="department" name="department" required="">
+          </div>
+          <div>
+            <label for="issue_type">Issue Type *</label>
+            <select id="issue_type" name="issue_type" required="">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="project">Project Discussion</option>
+              <option value="hardware">Hardware</option>
+              <option value="software">Software</option>
+              <option value="email">Email</option>
+              <option value="fileserver">File Server</option>
+              <option value="network">Network Access</option>
+              <option value="quote">Purchasing Quote</option>
+              <!-- <option value="helpdesk-feedback">Feedback</option> -->
+              <option value="general-other">Other</option>
+              <!-- <optgroup label="General"><option value="hardware">Hardware</option><option value="software">Software</option><option value="network">Network</option><option value="general-other">Other</option><optgroup label="Administration"><option value="add-employee">Add employee</option><option value="disable-employee">Disable employee</option><option value="post-search-meetings">Post search meetings</option></optgroup><optgroup label="Helpdesk"><option value="helpdesk-feedback">Feedback</option></optgroup> -->
+            </select>
+          </div>
+          <div>
+            <label for="description">Description of the Issue *</label>
+            <textarea id="description" name="description" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" required=""></textarea>
+          </div>
+          <div>
+            <label for="urgency">Urgency Level *</label>
+            <select id="urgency" name="urgency" required="">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+          <div>
+            <label for="file_upload">Supporting File (optional)</label>
+            <p class="sublabel">Max 5 MB per file. <input type="file" id="file_upload" name="file_upload" max-file-count="1" data-size-limit="">
+          </div>
+          <div>
+            <input type="submit" value="Submit Request">
+          </div>
+        </form>
+      </div>
+      <!-- User management form -->
+      <div class="form-parent hidden" category="user-management">
+        <!-- Form heading -->
+        <h3>User Management Form</h3>
+        <form enctype="multipart/form-data">
+          <input type="hidden" name="recaptcha_response" id="recaptcha_response">
+          <div>
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" persistence-id="name" required="">
+          </div>
+          <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" persistence-id="email" required="">
+          </div>
+          <div>
+            <label for="issue_type">Issue Type *</label>
+            <select id="issue_type" name="issue_type" required="" del-anchor="issue_type">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="disable-user">Disable user</option>
+              <option value="new-user">New user</option>
+              <option value="other">Other</option>
+              <!-- <optgroup label="General"><option value="hardware">Hardware</option><option value="software">Software</option><option value="network">Network</option><option value="general-other">Other</option><optgroup label="Administration"><option value="add-employee">Add employee</option><option value="disable-employee">Disable employee</option><option value="post-search-meetings">Post search meetings</option></optgroup><optgroup label="Helpdesk"><option value="helpdesk-feedback">Feedback</option></optgroup> -->
+            </select>
+          </div>
+          <div>
+            <label for="department">Department *</label>
+            <select id="department" name="department" required="">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="Assessment and Accreditation">Assessment and Accreditation</option>
+              <option value="AZCEECS">AZCEECS</option>
+              <option value="Business Office">Business Office</option>
+              <option value="Dean's Office">Dean"s Office</option>
+              <option value="Development and Alumni Affairs">Development and Alumni Affairs</option>
+              <option value="Distance Learning">Distance Learning</option>
+              <option value="Educational Research">Educational Research</option>
+              <option value="ETC">ETC</option>
+              <option value="Graduate Studies">Graduate Studies</option>
+              <option value="HDOSE">HDOSE</option>
+              <option value="IALT">IALT</option>
+              <option value="Instructional and Information Technology">Instructional and Information Technology</option>
+              <option value="Lastinger Center for Learning">Lastinger Center for Learning</option>
+              <option value="News & Publications">News & Publications</option>
+              <option value="PKY">PKY</option>
+              <option value="RRMA">RRMA</option>
+              <option value="SESPECS">SESPECS</option>
+              <option value="STL">STL</option>
+              <option value="Student Group">Student Group</option>
+              <option value="Student Services">Student Services</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="hidden">
+            <label for="employee-name">Employee Name *</label>
+            <input type="text" id="employee-name" name="employee-name" required="">
+          </div>
+          <div class="hidden">
+            <label for="employee-ufid">Employee UFID *</label>
+            <input type="text" id="employee-ufid" name="employee-ufid" required="">
+          </div>
+          <div del-anchor-id="issue_type" del-en="=new-user" class="hidden">
+            <label for="start-date">Start Date *</label>
+            <input type="date" id="start-date" name="start-date" placeholder="mm/dd/yyyy" required="">
+          </div>
+          <div del-anchor-id="issue_type" del-en="=disable-user" class="hidden">
+            <label for="termination-date">Termination Date *</label>
+            <input type="date" id="termination-date" name="termination-date" placeholder="mm/dd/yyyy" required="">
+          </div>
+          <div del-anchor-id="issue_type" del-en="=new-user" class="hidden">
+            <label for="email-alias">Email Alias *</label>
+            <select id="email-alias" name="email-alias" required="">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="gatorlink@coe.ufl.edu">gatorlink@coe.ufl.edu</option>
+              <option value="Other">Other – type in description below</option>
+            </select>
+          </div>
+          <div del-anchor-id="issue_type" del-en="=new-user" class="hidden">
+            <label for="email-list">Email List *</label>
+            <select id="email-list" name="email-list" required="">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="N/A">N/A</option>
+              <option value="COE-L-Faculty">COE-L-Faculty</option>
+              <option value="COE-L-OPS">COE-L-OPS</option>
+              <option value="COE-L-Staff">COE-L-Staff</option>
+            </select>
+          </div>
+          <div del-anchor-id="issue_type" del-en="=other" class="hidden">
+            <label for="grant-project">Grant/Project</label>
+            <select id="grant-project" name="grant-project">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="21st Century">21st Century</option>
+              <option value="Adept">Adept</option>
+              <option value="Capes">Capes</option>
+              <option value="CEDAR">CEDAR</option>
+              <option value="CEECS">CEECS</option>
+              <option value="Community Education">Community Education</option>
+              <option value="CWC">CWC</option>
+              <option value="DMHC">DMHC</option>
+              <option value="EdHCT">EdHCT</option>
+              <option value="i3">i3</option>
+              <option value="iControl">iControl</option>
+              <option value="IES">IES</option>
+              <option value="ipi">ipi</option>
+              <option value="Inq">Inq</option>
+              <option value="Leaf">Leaf</option>
+              <option value="LOCUS">LOCUS</option>
+              <option value="MLD">MLD</option>
+              <option value="Oasis">Oasis</option>
+              <option value="OnMed">OnMed</option>
+              <option value="PIC">PIC</option>
+              <option value="Plus">Plus</option>
+              <option value="PRIME Online">PRIME Online</option>
+              <option value="RITE">RITE</option>
+              <option value="SELF">SELF</option>
+              <option value="SET SAIL">SET SAIL</option>
+              <option value="Smart Start">Smart Start</option>
+              <option value="StarTalk">StarTalk</option>
+              <option value="STEM-TIPS">STEM-TIPS</option>
+              <option value="TLSI">TLSI</option>
+              <option value="UFutures">UFutures</option>
+              <option value="UFTeach">UFTeach</option>
+            </select>
+          </div>
+          <div del-anchor-id="issue_type" del-en="=other" class="hidden">
+            <label for="room-number">Room Number</label>
+            <input type="text" id="room-number" name="room-number">
+          </div>
+          <div>
+            <label for="description">Description</label>
+            <textarea id="description" name="description" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;"></textarea>
+          </div>
+          <div>
+            <label for="file_upload">Supporting File (optional)</label>
+            <p class="sublabel">Max 5 MB per file. <input type="file" id="file_upload" name="file_upload" max-file-count="1" data-size-limit="">
+          </div>
+          <div>
+            <input type="submit" value="Submit Request">
+          </div>
+        </form>
+      </div>
+      <!-- ***** Online Course Support (Canvas) form ***** -->
+      <div class="form-parent hidden" category="course-request">
+        <!-- Form heading -->
+        <h3>Online Course Support (Canvas)</h3>
+        <form>
+          <div>
+            <label for="full_name">Full Name *</label>
+            <input type="text" id="full_name" name="full_name" persistence-id="name" required="">
+          </div>
+          <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" persistence-id="email" required="">
+          </div>
+          <div>
+            <label for="role">Your role *</label>
+            <select id="role" name="role" required="">
+              <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+              <option value="Instructor">Instructor</option>
+              <option value="Student">Student</option>
+              <option value="Staff">Staff</option>
+            </select>
+          </div>
+          <div>
+            <label for="note">Note *</label>
+            <p class="sublabel">Please provide a detailed description of your request. <textarea id="note" name="note" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" placeholder="Additional information or comments" required></textarea>
+          </div>
+          <div>
+            <input type="submit" value="Submit Request">
+          </div>
+        </form>
+      </div>
+      <!-- ***** Website Edit Request form ***** -->
+      <div class="form-parent hidden" category="website-edits">
+        <!-- Form heading -->
+        <h3>Website Edits</h3>
+        <form data-sink="monday.com">
+          <div>
+            <label for="requested_by">Requestor Name *</label>
+            <input type="text" id="name" name="name" persistence-id="name" oninput="check_char_count(this, event);" required="">
+          </div>
+          <div>
+            <label for="email">Requestor Email *</label>
+            <input type="email" id="email" name="email" persistence-id="email" oninput="check_char_count(this, event);" required="">
+          </div>
+          <div>
+            <label for="website_url">Website URL *</label>
+            <p class="sublabel">Prepend <span class="url-prefix">http://</span> or <span class="url-prefix">https://</span>
+              <input type="url" id="website_url" name="website_url" oninput="check_char_count(this, event);" required="">
+          </div>
+          <div>
+            <label for="subject">Subject of Request *</label>
+            <input type="text" id="subject" name="subject" placeholder="e.g. Website update" required="" oninput="check_char_count(this, event);" char-limit="300">
+          </div>
+          <div>
+            <label for="description">Request Description *</label>
+            <div class="textarea-container">
+              <textarea id="description" name="description" oninput="auto_grow(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;" required=""></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="file_upload">Supporting file (up to 3 files)</label>
+            <p class="sublabel">Max 5 MB per file. <input type="file" id="file_upload" name="file_upload[]" max-file-count="3" multiple="">
+          </div>
+          <div>
+            <input type="submit" value="Submit Request">
+          </div>
+        </form>
+      </div>
+      <!-- ***** Faculty form ***** -->
+      <div class="form-parent hidden" category="faculty-profile">
+        <!-- Form heading -->
+        <h3>Faculty Profile Update</h3>
+        <form data-sink="monday.com">
+          <div>
+            <label for="email">Your Email *</label>
+            <input type="email" id="email" name="email" persistence-id="email" required="">
+          </div>
+          <div>
+            <label for="request_type">Request type *</label>
+            <p class="sublabel">Are you requesting a new profile page, or update an existing profile page? <select id="request_type" name="request_type" required="">
+                <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                <option value="new">Create a new page</option>
+                <option value="update">Update existing page</option>
+              </select>
+          </div>
+          <hr style="border: 0; border-bottom: 3px solid #ff7c7c; margin: 10px 0 16px 0;">
+          <h4>Faculty's information</h4>
+          <p class="sublabel" style="margin-bottom: 12px;">📝 If requesting an update to an existing page, please only fill out the fields you want to update.
+          <div>
+            <label for="faculty_name">Faculty Member Name *</label>
+            <input type="text" id="faculty_name" name="faculty_name" required>
+          </div>
+          <div>
+            <label for="display_name">Display Name</label>
+            <input type="text" id="display_name" name="display_name">
+          </div>
+          <div>
+            <label for="title">Title(s)</label>
+            <input type="text" id="title" name="title">
+          </div>
+          <div>
+            <label for="affiliations">College of Education Affiliations</label>
+            <input type="text" id="affiliations" name="affiliations">
+          </div>
+          <div>
+            <label for="business_email">Business Email</label>
+            <input type="email" id="business_email" name="business_email">
+          </div>
+          <div>
+            <label for="business_phone">Business Phone</label>
+            <input type="tel" id="business_phone" name="business_phone">
+          </div>
+          <div>
+            <label for="business_address">Business Address</label>
+            <textarea id="business_address" name="business_address" oninput="auto_grow(this)" style="min-height: 80px; max-height: 300px;"></textarea>
+          </div>
+          <div>
+            <label for="website_url">Website URL</label>
+            <p class="sublabel">Prepend <span class="url-prefix">http://</span> or <span class="url-prefix">https://</span>
+              <input type="url" id="website_url" name="website_url">
+          </div>
+          <div>
+            <label for="linkedin">LinkedIn Profile</label>
+            <p class="sublabel">Prepend <span class="url-prefix">http://</span> or <span class="url-prefix">https://</span>
+              <input type="url" id="linkedin" name="linkedin">
+          </div>
+          <div>
+            <label for="twitter">Twitter Handle</label>
+            <input type="text" id="twitter" name="twitter">
+          </div>
+          <div>
+            <label for="video_profile">Video Profile Link</label>
+            <p class="sublabel">Prepend <span class="url-prefix">http://</span> or <span class="url-prefix">https://</span>
+              <input type="url" id="video_profile" name="video_profile">
+          </div>
+          <div>
+            <label for="bio">Bio</label>
+            <p class="sublabel">Please limit to 150-200 words.
+            <div class="textarea-container">
+              <textarea id="bio" name="bio" oninput="auto_grow(this); check_char_count(this, event);" char-limit="1500" style="min-height: 120px; max-height: 300px;" placeholder=""></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label for="primary_research_interests">Primary Research Interests</label>
+            <p class="sublabel">Please select 10 areas. Hold "control" key to select multiple items.. <select id="primary_research_interests" name="primary_research_interests" multiple="" style="height: 250px;" max-selections="10">
+                <option value="Achievement">Achievement</option>
+                <option value="Action Research">Action Research</option>
+                <option value="Addictions Counseling">Addictions Counseling</option>
+                <option value="Adolescent Literacy">Adolescent Literacy</option>
+                <option value="Adult Education">Adult Education</option>
+                <option value="Adverse Childhood Experiences">Adverse Childhood Experiences</option>
+                <option value="Applied Behavior Analysis">Applied Behavior Analysis</option>
+                <option value="Applied Behavior Analysis in Early Childhood">Applied Behavior Analysis in Early Childhood</option>
+                <option value="Assessment and Evaluation">Assessment and Evaluation</option>
+                <option value="At Risk and Related Issues">At Risk and Related Issues</option>
+                <option value="Autism Spectrum Disorders">Autism Spectrum Disorders</option>
+                <option value="Behavior">Behavior</option>
+                <option value="Behavior Management">Behavior Management</option>
+                <option value="Bilingual/Bicultural Education">Bilingual/Bicultural Education</option>
+                <option value="Bilingualism and Biliteracy">Bilingualism and Biliteracy</option>
+                <option value="Blended Learning">Blended Learning</option>
+                <option value="Career Development">Career Development</option>
+                <option value="Casual Inference">Casual Inference</option>
+                <option value="Child Abuse and Neglect">Child Abuse and Neglect</option>
+                <option value="Child and Adolescent">Child and Adolescent</option>
+                <option value="Children and Poverty">Children and Poverty</option>
+                <option value="Children's Literature">Children"s Literature</option>
+                <option value="Civic Education">Civic Education</option>
+                <option value="Class-Wide Positive Behavior Supports">Class-Wide Positive Behavior Supports</option>
+                <option value="Classroom Management">Classroom Management</option>
+                <option value="Clinical Interventions">Clinical Interventions</option>
+                <option value="Clinical Interventions Training">Clinical Interventions Training</option>
+                <option value="Clinical Training and Internship">Clinical Training and Internship</option>
+                <option value="Cognition">Cognition</option>
+                <option value="Collaboration and Teaming">Collaboration and Teaming</option>
+                <option value="Community College">Community College</option>
+                <option value="Community Settings">Community Settings</option>
+                <option value="Complementary Therapies">Complementary Therapies</option>
+                <option value="Computer Science Education">Computer Science Education</option>
+                <option value="Conflict/Aggression">Conflict/Aggression</option>
+                <option value="Cost-Effectiveness Analysis">Cost-Effectiveness Analysis</option>
+                <option value="Counseling Issues">Counseling Issues</option>
+                <option value="Couples and Families">Couples and Families</option>
+                <option value="Creativity">Creativity</option>
+                <option value="Critical Literacy">Critical Literacy</option>
+                <option value="Culturally Responsive Teaching">Culturally Responsive Teaching</option>
+                <option value="Culturally Sustainable Pedagogy">Culturally Sustainable Pedagogy</option>
+                <option value="Curriculum Development">Curriculum Development</option>
+                <option value="Curriculum Integration">Curriculum Integration</option>
+                <option value="Curriculum, Assessment, and Accountability in Juvenile Justice and Psychiatric Schools">Curriculum, Assessment, and Accountability in Juvenile Justice and Psychiatric Schools</option>
+                <option value="Data Collection and Analysis">Data Collection and Analysis</option>
+                <option value="Democratic Citizenship Education">Democratic Citizenship Education</option>
+                <option value="Design and Development of Educational Technology Interventions">Design and Development of Educational Technology Interventions</option>
+                <option value="Development and Adjustment">Development and Adjustment</option>
+                <option value="Developmental Trajectories">Developmental Trajectories</option>
+                <option value="Digital Literacy">Digital Literacy</option>
+                <option value="Digital Tools in Qualitative Research">Digital Tools in Qualitative Research</option>
+                <option value="Disabilities Assessment and Outcomes">Disabilities Assessment and Outcomes</option>
+                <option value="Distance Observation of Teacher Interns/Preservice">Distance Observation of Teacher Interns/Preservice</option>
+                <option value="Diverse Learners">Diverse Learners</option>
+                <option value="Dropout Prevention">Dropout Prevention</option>
+                <option value="Dual Language Learners">Dual Language Learners</option>
+                <option value="ESOL">ESOL</option>
+                <option value="Early Childhood">Early Childhood</option>
+                <option value="Early Childhood Assessment and Measurement">Early Childhood Assessment and Measurement</option>
+                <option value="Early Childhood Literacy">Early Childhood Literacy</option>
+                <option value="Early Childhood Studies">Early Childhood Studies</option>
+                <option value="Early Intervention">Early Intervention</option>
+                <option value="Economics of Education">Economics of Education</option>
+                <option value="Education Levels">Education Levels</option>
+                <option value="Education Types">Education Types</option>
+                <option value="Educational/Instructional Design">Educational/Instructional Design</option>
+                <option value="Educational Assessment and Measurement">Educational Assessment and Measurement</option>
+                <option value="Educational Ethnography">Educational Ethnography</option>
+                <option value="Educational Studies">Educational Studies</option>
+                <option value="Elementary Education">Elementary Education</option>
+                <option value="Emerging Technologies">Emerging Technologies</option>
+                <option value="Emotion">Emotion</option>
+                <option value="Empathy">Empathy</option>
+                <option value="English Education">English Education</option>
+                <option value="Environmental Studies">Environmental Studies</option>
+                <option value="Evidence-based Practices">Evidence-based Practices</option>
+                <option value="Executive Functioning">Executive Functioning</option>
+                <option value="Experimental and Quasi-Experimental Design and Analysis">Experimental and Quasi-Experimental Design and Analysis</option>
+                <option value="Faculty Development">Faculty Development</option>
+                <option value="Family Engagement">Family Engagement</option>
+                <option value="Family Processes">Family Processes</option>
+                <option value="Family Violence">Family Violence</option>
+                <option value="Family-centered Practices">Family-centered Practices</option>
+                <option value="Family-centered Services">Family-centered Services</option>
+                <option value="Field Experience">Field Experience</option>
+                <option value="Finance">Finance</option>
+                <option value="Foster Youth">Foster Youth</option>
+                <option value="Gender Issues">Gender Issues</option>
+                <option value="Gifted Education">Gifted Education</option>
+                <option value="Grief and Loss">Grief and Loss</option>
+                <option value="Group Counseling">Group Counseling</option>
+                <option value="Health/Allied Health">Health/Allied Health</option>
+                <option value="Health Issues">Health Issues</option>
+                <option value="Higher Education">Higher Education</option>
+                <option value="Higher Education Policy">Higher Education Policy</option>
+                <option value="Historical Foundations">Historical Foundations</option>
+                <option value="Historically Black Colleges and Student Involvement">Historically Black Colleges and Student Involvement</option>
+                <option value="History of Education">History of Education</option>
+                <option value="Immigration Issues and Identities">Immigration Issues and Identities</option>
+                <option value="Implementation Science">Implementation Science</option>
+                <option value="Inclusion">Inclusion</option>
+                <option value="Inclusive Education">Inclusive Education</option>
+                <option value="Individual Mental Health">Individual Mental Health</option>
+                <option value="Informal/Nonformal Education">Informal/Nonformal Education</option>
+                <option value="Information Literacy">Information Literacy</option>
+                <option value="Inquiry-Based Science Teaching and Learning">Inquiry-Based Science Teaching and Learning</option>
+                <option value="Instructional Practices for Young Children at Risk">Instructional Practices for Young Children at Risk</option>
+                <option value="Integrated Classrooms">Integrated Classrooms</option>
+                <option value="Intellectual and Developmental Disabilities">Intellectual and Developmental Disabilities</option>
+                <option value="International Education">International Education</option>
+                <option value="Intervention">Intervention</option>
+                <option value="Juvenile Justice">Juvenile Justice</option>
+                <option value="K-20 Science Teaching and Learning">K-20 Science Teaching and Learning</option>
+                <option value="Knowledge and Theory">Knowledge and Theory</option>
+                <option value="Language">Language</option>
+                <option value="Language and Literacy Development">Language and Literacy Development</option>
+                <option value="Laws, Ethics, and Values">Laws, Ethics, and Values</option>
+                <option value="Leadership Development">Leadership Development</option>
+                <option value="Learning Culture and Technology">Learning Culture and Technology</option>
+                <option value="Learning Disabilities/RTI">Learning Disabilities/RTI</option>
+                <option value="Learning Styles">Learning Styles</option>
+                <option value="Literacy">Literacy</option>
+                <option value="Longitudinal Data Analysis">Longitudinal Data Analysis</option>
+                <option value="Mathematical Modeling">Mathematical Modeling</option>
+                <option value="Mathematics Education">Mathematics Education</option>
+                <option value="Media Literacy">Media Literacy</option>
+                <option value="Mentoring">Mentoring</option>
+                <option value="Mentorship">Mentorship</option>
+                <option value="Methodological Research">Methodological Research</option>
+                <option value="Middle School/Jr High">Middle School/Jr High</option>
+                <option value="Mild and Moderate Disabilities">Mild and Moderate Disabilities</option>
+                <option value="Mixed Methods">Mixed Methods</option>
+                <option value="Motivation">Motivation</option>
+                <option value="Multi-tiered Systems of Support">Multi-tiered Systems of Support</option>
+                <option value="Multicultural Competencies">Multicultural Competencies</option>
+                <option value="Multicultural Literacy">Multicultural Literacy</option>
+                <option value="Multicultural and Minority Education">Multicultural and Minority Education</option>
+                <option value="Multilevel Model">Multilevel Model</option>
+                <option value="Multiliteracies">Multiliteracies</option>
+                <option value="Narrative Inquiry">Narrative Inquiry</option>
+                <option value="Online Mentoring">Online Mentoring</option>
+                <option value="Online and Distance Education">Online and Distance Education</option>
+                <option value="Opportunities to Learn">Opportunities to Learn</option>
+                <option value="Other Issues and Trends">Other Issues and Trends</option>
+                <option value="Other School Issues">Other School Issues</option>
+                <option value="Pediatric Screening">Pediatric Screening</option>
+                <option value="Philosophy of Education">Philosophy of Education</option>
+                <option value="Policy Development">Policy Development</option>
+                <option value="Positionality of African American Girls as Science Learners">Positionality of African American Girls as Science Learners</option>
+                <option value="Postsecondary Education">Postsecondary Education</option>
+                <option value="Preservice Teacher Education">Preservice Teacher Education</option>
+                <option value="Prevention Science">Prevention Science</option>
+                <option value="Primary/Elementary">Primary/Elementary</option>
+                <option value="Principals/Assistant Principals">Principals/Assistant Principals</option>
+                <option value="Problem Solving">Problem Solving</option>
+                <option value="Professional Development">Professional Development</option>
+                <option value="Professional Development in Early Childhood">Professional Development in Early Childhood</option>
+                <option value="Psychological Studies">Psychological Studies</option>
+                <option value="Public Education">Public Education</option>
+                <option value="Qualitative Research">Qualitative Research</option>
+                <option value="Quantitative Research">Quantitative Research</option>
+                <option value="Race/Ethnicity Issues">Race/Ethnicity Issues</option>
+                <option value="Reading">Reading</option>
+                <option value="Research/Program Evaluation">Research/Program Evaluation</option>
+                <option value="Research Design">Research Design</option>
+                <option value="Resilience">Resilience</option>
+                <option value="Response to Intervention">Response to Intervention</option>
+                <option value="Rural Education">Rural Education</option>
+                <option value="STEM Teaching Assistant Development">STEM Teaching Assistant Development</option>
+                <option value="School Counseling">School Counseling</option>
+                <option value="School Curriculum Areas">School Curriculum Areas</option>
+                <option value="School Psychology">School Psychology</option>
+                <option value="School-wide Positive Behavior Supports">School-wide Positive Behavior Supports</option>
+                <option value="Science Education">Science Education</option>
+                <option value="Science Teacher Education and Professional Development">Science Teacher Education and Professional Development</option>
+                <option value="Secondary/High School Transition">Secondary/High School Transition</option>
+                <option value="Service Learning">Service Learning</option>
+                <option value="Severe/Multiple Disabilities">Severe/Multiple Disabilities</option>
+                <option value="Sexuality">Sexuality</option>
+                <option value="Single Case Experimental">Single Case Experimental</option>
+                <option value="Single Subject Research/Single Case Design">Single Subject Research/Single Case Design</option>
+                <option value="Social Justice in Education">Social Justice in Education</option>
+                <option value="Social Studies Education">Social Studies Education</option>
+                <option value="Social, Emotional, Behavioral Foundations of Early Learning">Social, Emotional, Behavioral Foundations of Early Learning</option>
+                <option value="Social/Behavioral Intervention">Social/Behavioral Intervention</option>
+                <option value="Socialization Issues/Social Competence">Socialization Issues/Social Competence</option>
+                <option value="Sociocultural Perspectives">Sociocultural Perspectives</option>
+                <option value="Socioeconomic Foundations">Socioeconomic Foundations</option>
+                <option value="Sociolinguistics">Sociolinguistics</option>
+                <option value="Special Education">Special Education</option>
+                <option value="Special Educator's Roles and Responsibilities">Special Educator"s Roles and Responsibilities</option>
+                <option value="Spirituality and Religion">Spirituality and Religion</option>
+                <option value="Statistical Power Analysis">Statistical Power Analysis</option>
+                <option value="Statistics/Applied Stats">Statistics/Applied Stats</option>
+                <option value="Stress and Coping">Stress and Coping</option>
+                <option value="Student/Client Issues">Student/Client Issues</option>
+                <option value="Systematic Review Methods and Meta-analysis">Systematic Review Methods and Meta-analysis</option>
+                <option value="Teacher Education">Teacher Education</option>
+                <option value="Teacher Evaluation">Teacher Evaluation</option>
+                <option value="Teacher Leadership">Teacher Leadership</option>
+                <option value="Teacher Quality">Teacher Quality</option>
+                <option value="Teaching and Licensure">Teaching and Licensure</option>
+                <option value="Technology">Technology</option>
+                <option value="Technology Trends and Issues">Technology Trends and Issues</option>
+                <option value="Theoretical Perspectives">Theoretical Perspectives</option>
+                <option value="Therapeutic Relationship">Therapeutic Relationship</option>
+                <option value="Training">Training</option>
+                <option value="Trauma">Trauma</option>
+                <option value="Turnaround School Leadership">Turnaround School Leadership</option>
+                <option value="Universal Design for Learning">Universal Design for Learning</option>
+                <option value="Urban Education">Urban Education</option>
+                <option value="Value-Added Measures of Teacher Evaluation">Value-Added Measures of Teacher Evaluation</option>
+                <option value="Virtual Reality">Virtual Reality</option>
+                <option value="Web 2.0 Technologies">Web 2.0 Technologies</option>
+                <option value="Writing">Writing</option>
+                <option value="Young Children at Risk">Young Children at Risk</option>
+              </select>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <label for="primary_3_interests">Primary 3 Research Interests</label>
+            <p class="sublabel">Please select your research interest from the list <u>above</u> first. <select id="primary_3_interests" name="primary_3_interests" multiple="" style="height: 150px;" max-selections="3"></select>
+          </div>
+          <div>
+            <label for="education_certifications">Education and Certifications</label>
+            <p class="sublabel">Use a new line for each entry.
+            <p class="sublabel example-label">
+              <u>Example</u>
+              <br>Ph.D., University of California, Berkeley, 2015 <br>M.Ed., University of Texas at Austin, 2009
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="education_certifications" name="education_certifications" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="appointments_affiliations">Appointments and Non-UF Affiliations</label>
+            <p class="sublabel">Use a new line for each entry.
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="appointments_affiliations" name="appointments_affiliations" char-limit="1800" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="activities_honors">Activities and Honors</label>
+            <p class="sublabel">Use a new line for each entry.
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="activities_honors" name="activities_honors" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="selected_grants">Selected Grants</label>
+            <p class="sublabel">Use a new line for each entry. For each entry, <span class="highlighted-label">include grant title, your role, funding organization/agency, years active, funding amount.</span>
+            <p class="sublabel example-label">
+              <u>Example</u>
+              <br>Project CARE (Connecting Aging Residents to Essential Services), Lead Researcher, Program Manager, US Department of Social Services (DSS), Grant #: DSS-2024-SCL-AGE-SUPPORT-0012, 2024-2029, $3,895,200.
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="selected_grants" name="selected_grants" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;" placeholder=""></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="publications_articles">Publications: Articles</label>
+            <p class="sublabel">Use a new line for each entry.
+            <p class="sublabel example-label">
+              <u>Example</u>
+              <br>Smith, A., Lee, K., Thompson, R., Davis, S.L. (in press). The Senior Support Framework: An Emerging Resource for Mental Health Professionals Addressing Depression in the Elderly. Journal of Aging and Wellness.
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="publications_articles" name="publications_articles" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="publications_books">Publications: Books and Chapters</label>
+            <p class="sublabel">Use a new line for each entry. Please use the same format as used for "Publications: Articles".
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="publications_books" name="publications_books" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="publications_other">Publications: Other</label>
+            <p class="sublabel">Use a new line for each entry. Please use the same format as used for "Publications: Articles".
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="publications_other" name="publications_other" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="selected_presentations">Selected Presentations</label>
+            <p class="sublabel">Use a new line for each entry.
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="selected_presentations" name="selected_presentations" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;"></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="selected_links">Selected Links</label>
+            <p class="sublabel">Use a new line for each entry. Include the link and the corresponding displayed title text for each link.
+            <p class="sublabel example-label">
+              <u>Example</u>
+              <br>My Link 1 – https://my-link-1.com <br>My Link 2 – https://my-link-2.com
+            <div class="textarea-container">
+              <div id="line-numbers" class="lines" style="min-height: 100px; max-height: 300px;"></div>
+              <textarea id="selected_links" name="selected_links" oninput="auto_grow(this); show_line_numbers(this); check_char_count(this, event);" char-limit="1800" style="min-height: 100px; max-height: 300px;" placeholder=""></textarea>
+            </div>
+            <p class="sublabel char-count">
+          </div>
+          <div>
+            <label for="cv_upload">Upload your CV</label>
+            <p class="sublabel">Max 5 MB. Please upload a <b>PDF</b> file. <input type="file" id="cv_upload" name="cv_upload" max-file-count="1" accept=".pdf">
+          </div>
+          <div>
+            <label for="supporting_files">Supporting files (up to 5 files)</label>
+            <p class="sublabel">Max 5 MB per file. Upload documents, pictures, presentations, videos, or compressed files. <input type="file" id="supporting_files" name="supporting_files[]" max-file-count="5" multiple="" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.bmp,.ppt,.pptx,.xls,.xlsx,.csv">
+          </div>
+          <div>
+            <input type="submit" value="Submit Request">
+          </div>
+        </form>
+      </div>
+      <!-- *** News & Communications *** -->
+      <div class="form-parent hidden" category="news-and-communications">
+        <!-- Form heading -->
+        <h3>News & Communications</h3>
+        <form action="/submit-event-participation" method="post">
+          <div>
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" persistence-id="name" required="">
+          </div>
+          <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" persistence-id="email" placeholder="Email address of the primary contact" required>
+          </div>
+          <div>
+            <label for="who">Who? *</label>
+            <p class="sublabel">Center members, affiliates, students, etc. <input type="text" id="who" name="who" required>
+          </div>
+          <div>
+            <label for="what">What? *</label>
+            <p class="sublabel">Brief description of the activity you are participating in on behalf of the Center, college or university. <textarea id="what" name="what" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" placeholder="" required></textarea>
+          </div>
+          <div>
+            <label for="link">Link?</label>
+            <p class="sublabel">Prepend <span class="url-prefix">http://</span> or <span class="url-prefix">https://</span>
+              <input type="url" id="link" name="link" placeholder="Link to event website, if available">
+          </div>
+          <div>
+            <label for="when">When? *</label>
+            <input type="date" id="when" name="when" placeholder="mm/dd/yyyy" required="">
+          </div>
+          <div>
+            <label for="where">Where? *</label>
+            <p class="sublabel">Location(s) of the event/activities. <input type="text" id="where" name="where" placeholder="" required="">
+          </div>
+          <div>
+            <label for="why">Why? *</label>
+            <p class="sublabel">The impact of your participation for attendees or importance to the Center, college or university. <textarea id="why" name="why" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" placeholder="" required=""></textarea>
+          </div>
+          <div>
+            <label for="needs">Any specific communication needs?</label>
+            <textarea id="needs" name="needs" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" placeholder=""></textarea>
+          </div>
+          <div>
+            <label for="file_upload">Have a photo to add?</label>
+            <p class="sublabel">Max 5 MB per file. <input type="file" id="file_upload" name="file_upload" max-file-count="1" data-size-limit="" accept=".png,.jpeg,.jpg,.bmp,.tiff">
+          </div>
+          <div>
+            <input type="submit" value="Submit Request">
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- ***** Photo Requests ***** -->
+        <div class="form-parent hidden" category="photo-request">
+            <!-- Form heading -->
+            <h3>Photo Requests</h3>
+            <form>
+                <div>
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" persistence-id="name" required="">
+                </div>
+                <div>
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" persistence-id="email" required="">
+                </div>
+                <div>
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" persistence-id="phone">
+                </div>
+                <div>
+                    <label for="request_type">Type of request *</label>
+                    <select id="request_type" name="request_type" required="" onchange="toggleEventFields(this)">
+                        <option disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                        <option value="photoshoot">Photoshoot</option>
+                        <option value="headshot">Headshot</option>
+                        <option value="event">Event</option>
+                    </select>
+                    <div>
+                        <label for="date" id="date-label">Date *</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <div id="event-fields" class="hidden">
+                        <div>
+                            <label for="start_time">Start Time *</label>
+                            <input type="time" id="start_time" name="start_time">
+                        </div>
+                        <div>
+                            <label for="end_time">End Time *</label>
+                            <input type="time" id="end_time" name="end_time">
+                        </div>
+                    </div>
+                    <div id="location-fields" class="hidden">
+                        <div>
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="other_info">Other Information</label>
+                        <textarea id="other_info" name="other_info" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" placeholder="Any additional information"></textarea>
+                    </div>
+                    <div>
+                        <input type="submit" value="Submit Request">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- ***** Video Studio Requests ***** -->
+        <div class="form-parent hidden" category="video-studio-request">
+          <!-- Form heading -->
+          <h3>Video Studio Requests</h3>
+          <form enctype="multipart/form-data">
+            <input type="hidden" name="action" value="form-email">
+            <div>
+              <label for="name">Full Name *</label>
+              <input type="text" id="name" name="name" persistence-id="name" required="">
+            </div>
+            <div>
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" persistence-id="email" required="">
+            </div>
+            <div>
+              <label for="faculty-advisor">Faculty or Advisor</label>
+              <input type="text" id="faculty-advisor" name="faculty-advisor">
+            </div>
+            <div>
+              <label for="purpose">Purpose of the video shoot *</label>
+              <select id="purpose" name="purpose" required="">
+                <option disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                <option value="Grant-funded research">Grant-funded research</option>
+                <option value="Contract">Contract</option>
+                <option value="Course (DL fees)">Course (DL fees)</option>
+                <option value="Promotional - STL">Promotional – STL</option>
+                <option value="Promotional - SESPECS">Promotional – SESPECS</option>
+                <option value="Promotional - HDOSE">Promotional – HDOSE</option>
+                <option value="Promotional - Lastinger">Promotional – Lastinger</option>
+                <option value="Promotional - AZCEECS">Promotional – AZCEECS</option>
+                <option value="Promotional - IALT">Promotional – IALT</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="on-camera-talent">Who will be your on-camera talent?</label>
+              <input type="text" id="on-camera-talent" name="on-camera-talent">
+            </div>
+            <div>
+              <label for="talent-email">Email address of your talent</label>
+              <input type="text" id="talent-email" name="talent-email">
+            </div>
+            <div>
+              <label for="etc-studio-space">Will you be using our studio space? *</label>
+              <select id="etc-studio-space" name="etc-studio-space" required="">
+                <option disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div>
+              <label for="alt-location">If not, what is the location of the video shoot?</label>
+              <input type="text" id="alt-location" name="alt-location">
+            </div>
+            <div>
+              <label for="alt-location">Parking permit status</label>
+              <select id="parking-permit" name="parking-permit" required="">
+                <option disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                <option value="Orange Decal">Orange Decal</option>
+                <option value="Blue Decal">Blue Decal</option>
+                <option value="Red Decal">Red Decal</option>
+                <option value="Blue Official Decal">Blue Official Decal</option>
+                <option value="Non-UF Employee">Non-UF Employee</option>
+              </select>
+            </div>
+            <div>
+              <label for="date">What date would you like to use the studio? *</label>
+              <input type="date" id="date" name="date" required="">
+            </div>
+            <div>
+                <label for="start_time">At what time would you like to use the studio?</label>
+                <input type="time" id="start_time" name="start_time" required="" min="09:00" max="17:00">
+            </div>
+            <div>
+              <label for="other_info">Other Information</label>
+              <textarea id="other_info" name="other_info" oninput="auto_grow(this)" style="min-height: 100px; max-height: 300px;" placeholder="Any additional information"></textarea>
+            </div>
+            <div>
+              <label for="file_upload">Please attach your script file (if applicable)</label>
+              <p class="sublabel">Max 5 MB per file. Please attach a .pdf, .doc, .docx, or .txt file. <input type="file" id="file_upload" name="file_upload" accept=".doc,.docx,.pdf,.txt" max-file-count="1" data-size-limit="">
+            </div>
+            <div>
+              <input type="submit" name="action" value="Submit Request">
+            </div>
+          </form>
+        </div>
+        <!-- ***** Marketing and Design ***** -->
+        <div class="form-parent hidden" category="marketing-and-design">
+          <!-- Form heading -->
+          <h3>Marketing and Design</h3>
+          <form data-sink="monday.com">
+            <div>
+              <label for="client_name">Client"s Full Name *</label>
+              <input type="text" id="client_name" name="client_name" persistence-id="name" required="">
+            </div>
+            <div>
+              <label for="client_email">Client"s Email *</label>
+              <input type="email" id="client_email" name="client_email" persistence-id="email" required="">
+            </div>
+            <div>
+              <label for="project_name">Project Name *</label>
+              <input type="text" id="project_name" name="project_name" required="">
+            </div>
+            <div>
+              <label for="subject">Subject of Request *</label>
+              <input type="text" id="subject" name="subject" oninput="check_char_count(this, event);" char-limit="300" placeholder="" required="">
+            </div>
+            <div>
+              <label for="project_description">Brief Project Description *</label>
+              <textarea id="project_description" name="project_description" oninput="check_char_count(this, event);" char-limit="1500" style="min-height: 100px; max-height: 300px;" required=""></textarea>
+            </div>
+            <div>
+              <label for="request_type">Request type *</label>
+              <select id="request_type" name="request_type" required="">
+                <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                <option value="marketing">Marketing</option>
+                <option value="design">Design</option>
+                <option value="development">Development</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="due_date"> Requested Due Date</label>
+              <input type="date" id="due_date" name="due_date" placeholder="mm/dd/yyyy">
+            </div>
+            <div>
+              <label for="content_assistance">Do you need assistance with content development? *</label>
+              <select id="content_assistance" name="content_assistance" required="">
+                <option value="" disabled="" selected="" hidden="">⚠️ Please choose an option</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+                <option value="unsure">Unsure or Not Applicable</option>
+              </select>
+            </div>
+            <div>
+              <label for="project_link">Project Link</label>
+              <p class="sublabel">Prepend <span class="url-prefix">http://</span> or <span class="url-prefix">https://</span>
+                <input type="url" id="project_link" name="project_link" placeholder="If applicable">
+            </div>
+            <div>
+              <label for="file_upload">Files (upto 3 files) *</label>
+              <p style="line-height: 20px;font-size: 14px; padding: 0 4px; margin-bottom: 6px;">Up to 5 MB. This can include site content, logos, images, etc. Click to upload files, or drag & drop files here. <input type="file" id="file_upload" name="file_upload[]" multiple="" max-file-count="3">
+            </div>
+            <div>
+              <input type="submit" value="Submit Request">
+            </div>
+          </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+    function toggleEventFields(selectElement) {
+      const eventFields = document.getElementById('event-fields');
+      const locationFields = document.getElementById('location-fields');
+      const dateLabel = document.getElementById('date-label');
+      const dateInput = document.getElementById('date');
+      if (selectElement.value === 'event') {
+        eventFields.classList.remove('hidden');
+        eventFields.querySelectorAll('input').forEach(input => input.required = true);
+        dateLabel.textContent = 'Date*';
+        dateInput.required = true;
+        locationFields.classList.remove('hidden');
+        locationFields.querySelectorAll('input').forEach(input => input.required = true);
+      } else if (selectElement.value === 'headshot') {
+        eventFields.classList.add('hidden');
+        eventFields.querySelectorAll('input').forEach(input => input.required = false);
+        dateLabel.textContent = 'Suggested Date';
+        dateInput.required = false;
+        locationFields.classList.add('hidden');
+        locationFields.querySelectorAll('input').forEach(input => input.required = false);
+      } else {
+        eventFields.classList.add('hidden');
+        eventFields.querySelectorAll('input').forEach(input => input.required = false);
+        dateLabel.textContent = 'Date*';
+        dateInput.required = true;
+        locationFields.classList.remove('hidden');
+        locationFields.querySelectorAll('input').forEach(input => input.required = true);
+      }
+    }
+  </script>
