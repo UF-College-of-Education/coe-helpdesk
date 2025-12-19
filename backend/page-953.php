@@ -36,42 +36,72 @@
         return;
     }
 
-    // Function to verify the Google reCAPTCHA response
     function verifycaptcha($recaptcha_response, $threshold = 0.5) {
-
-        // If the reCAPTCHA response is null, return false
-        if ($recaptcha_response == NULL) return false;
-
-        // Google reCAPTCHA secret key
-        $secret = '6Ld7B3UmAAAAAJ4rJ-HwbEO5ooryuXssVOrhL_SP';
-
-        // Prepare the data to be sent to Google's reCAPTCHA verification API
-        $url = 'https://www.google.com/recaptcha/api/siteverify';
-        $data = array(
-            'secret' => $secret,
-            'response' => $recaptcha_response
-        );
-
-        // Set up the HTTP POST request options
-        $options = array(
-            'http' => array(
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method'  => 'POST',
-                'content' => http_build_query($data),
-            ),
-        );
-
-        // Send the POST request and decode the JSON response from Google
-        $context  = stream_context_create($options);
-        $response = file_get_contents($url, false, $context);
+        // If the reCAPTCHA response token is null, return false
+        if ($recaptcha_response == NULL) {
+            error_log('Token is NULL - returning false');
+            return false;
+        }
+    
+        // Google reCAPTCHA Enterprise configuration
+        // Manage API key at https://console.cloud.google.com/apis/credentials?project=college-of-educa-1690491796259
+        // Manage site key at https://console.cloud.google.com/security/recaptcha?project=college-of-educa-1690491796259
+        $project_id = 'college-of-educa-1690491796259';
+        $api_key = 'AIzaSyDKQ_XDMx2W44M-37GxY6Sebyl51y-heMU'; 
+        $site_key = '6Lf6di0sAAAAAKmzfGT9VbogLr4ekPhBNFfOP-o5';
+    
+        // reCAPTCHA Enterprise API endpoint
+        $url = "https://recaptchaenterprise.googleapis.com/v1/projects/{$project_id}/assessments?key={$api_key}";
         
-        $result = json_decode($response);
+        // Build event object - only include expectedAction if it's not empty
+        $event = array(
+            'token' => $recaptcha_response,
+            'expectedAction' => 'helpdesk_submit',
+            'siteKey' => $site_key
+        );
 
+        if (!empty($expected_action)) {
+            $event['expectedAction'] = $expected_action;
+        }
+
+        // Prepare the request body
+        $data = array('event' => $event);
+        $json_data = json_encode($data);
+
+        // Use cURL for better error handling
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($json_data)
+        ));
+
+        // Execute request
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($ch);
+        $curl_errno = curl_errno($ch);
+        curl_close($ch);
+
+        if ($response === false || $curl_errno !== 0) {
+            error_log('cURL request failed');
+            return false;
+        }
+                
+        $result = json_decode($response);
+    
         // Check if reCAPTCHA was successful and the score meets the threshold
-        if ($result->success && $result->score >= $threshold) {
+        if (isset($result->tokenProperties->valid) && 
+            $result->tokenProperties->valid && 
+            $result->riskAnalysis->score >= $threshold) {
             return true;
         } else {
-            // Return false if reCAPTCHA verification failed
+            error_log('Verification failed');
+            if (isset($result->error)) {
+                error_log('API Error: ' . print_r($result->error, true));
+            }
             return false;
         }
     }
@@ -694,19 +724,37 @@
             }
         }
 
-        // Uploads a file to an already existing item (identified by the item's ID)
-        function uploadToMonday( $token, $item_id, $files_category, $column) {
-            // Initialize a cURL session
-            $ch = curl_init();
+        /*
+            ==========================================
+            FIXED: uploadToMonday function
+            ==========================================
+            Bug fixes applied:
+            1. Fixed wrong URL for single file uploads (was missing /file)
+            2. Now properly uses $token parameter instead of hardcoded token
+            3. Added curl_close() for multiple files loop
+            4. Added error logging
+        */
+        function uploadToMonday($token, $item_id, $files_category, $column) {
             
-            $files = $_FILES[$files_category];
-            if ($files == NULL) return false;
+            $files = $_FILES[$files_category] ?? null;
+            if ($files == NULL) {
+                error_log("uploadToMonday: No files found for category: $files_category");
+                return false;
+            }
+            
+            error_log("uploadToMonday: Starting upload for $files_category to column $column");
+            error_log("uploadToMonday: File data: " . print_r($files, true));
         
             // If the $files contain multiple files
             if (is_array($files['tmp_name'])) {
 
                 $success = true;
                 foreach ($files['tmp_name'] as $index => $tmp_name) {
+                    
+                    // Skip if no file at this index or upload error
+                    if (empty($tmp_name) || $files['error'][$index] !== UPLOAD_ERR_OK) {
+                        continue;
+                    }
 
                     // Access the file data
                     $file = [
@@ -732,13 +780,16 @@
                         'variables[file]' => new CURLFile($file['tmp_name'], $file['type'], $file['name'])
                     ];
 
+                    // Initialize a cURL session for each file
+                    $ch = curl_init();
+                    
                     // Set cURL options
                     curl_setopt($ch, CURLOPT_URL, 'https://api.monday.com/v2/file');
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $formData);
                     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                        'Authorization: Bearer ' . "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjM5Njc0MDk4NiwiYWFpIjoxMSwidWlkIjozODYxNjA2NywiaWFkIjoiMjAyNC0wOC0xM1QxOToyMzoxNi40OTJaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTQ5MjI4NTksInJnbiI6InVzZTEifQ.9_1Ddg1EntwN8iclPVxvJLk2wDoNBcx4W5AU_gHLxUA",
+                        'Authorization: Bearer ' . $token,
                         'Content-Type: multipart/form-data'
                     ]);
 
@@ -748,12 +799,16 @@
                     // Check for cURL errors
                     if ($response === false) {
                         $error = curl_error($ch);
-                        // echo "Error uploading file: $error\n";
+                        error_log("Monday.com file upload error (multiple): $error");
+                        $success = false;
                     } else {
-                        // echo "File uploaded successfully.\n";
+                        error_log("Monday.com file upload response (multiple): $response");
                     }
                     
-                    $success = $success && $response;
+                    // Close this cURL session - FIXED: was missing before
+                    curl_close($ch);
+                    
+                    $success = $success && ($response !== false);
                 }
 
                 return $success;
@@ -761,6 +816,12 @@
 
             // If only one file is sent
             else {
+                
+                // Check for upload errors
+                if ($files['error'] !== UPLOAD_ERR_OK) {
+                    error_log("Monday.com file upload error: File upload error code " . $files['error']);
+                    return false;
+                }
 
                 // Access the file data
                 $file = [
@@ -770,6 +831,8 @@
                     'error' => $files['error'],
                     'size' => $files['size'],
                 ];
+                
+                error_log("uploadToMonday: Uploading single file: " . $file['name']);
 
                 // Create the GraphQL mutation query
                 $query = '
@@ -786,13 +849,18 @@
                     'variables[file]' => new CURLFile($file['tmp_name'], $file['type'], $file['name'])
                 ];
 
+                // Initialize a cURL session
+                $ch = curl_init();
+
                 // Set cURL options
-                curl_setopt($ch, CURLOPT_URL, 'https://api.monday.com/v2/');
+                // FIXED: URL was 'https://api.monday.com/v2/' - missing /file at the end!
+                curl_setopt($ch, CURLOPT_URL, 'https://api.monday.com/v2/file');
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 curl_setopt($ch, CURLOPT_POST, true);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $formData);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'Authorization: Bearer ' . "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjM5Njc0MDk4NiwiYWFpIjoxMSwidWlkIjozODYxNjA2NywiaWFkIjoiMjAyNC0wOC0xM1QxOToyMzoxNi40OTJaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTQ5MjI4NTksInJnbiI6InVzZTEifQ.9_1Ddg1EntwN8iclPVxvJLk2wDoNBcx4W5AU_gHLxUA",
+                    // FIXED: Now uses $token parameter instead of hardcoded value
+                    'Authorization: Bearer ' . $token,
                     'Content-Type: multipart/form-data'
                 ]);
 
@@ -802,16 +870,16 @@
                 // Check for cURL errors
                 if ($response === false) {
                     $error = curl_error($ch);
-                    // echo "Error uploading file: $error\n";
+                    error_log("Monday.com file upload error (single): $error");
                 } else {
-                    // echo "File uploaded successfully: $response\n";
+                    error_log("Monday.com file upload response (single): $response");
                 }
-            }
-            
-            // Close the cURL session
-            curl_close($ch);
+                
+                // Close the cURL session
+                curl_close($ch);
 
-            return $response;
+                return $response;
+            }
         }
 
         // Check if the file size is under the maximum allowed size
@@ -826,6 +894,9 @@
                 // If the $files contain multiple files
                 if (is_array($files['tmp_name'])) {
                     foreach ($files['tmp_name'] as $index => $tmp_name) {
+                        // Skip empty entries
+                        if (empty($tmp_name)) continue;
+                        
                         // Access the file data
                         $file = [
                             'tmp_name' => $files['tmp_name'][$index],
@@ -897,12 +968,29 @@
             $website_url = $_POST['website_url'];
 
             // Handle file uploads
-            $cv_file_upload = isset($_POST['cv_file_upload']) ? $_POST['cv_file_upload'] : null;
+            $cv_file_upload = isset($_FILES['cv_file_upload']) ? $_FILES['cv_file_upload'] : null;
             $supporting_file_upload = isset($_FILES['supporting_file_upload']) ? $_FILES['supporting_file_upload'] : null;
 
-            // Enforce file size limit
-            $cv_file_info = fileSizeCheck('cv_file_upload');
-            $supporting_files_info = fileSizeCheck('supporting_file_upload');
+            /*
+                ==========================================
+                FIX #1: Proper file existence check before size validation
+                ==========================================
+                Only run fileSizeCheck if the file actually exists and was uploaded successfully.
+                This prevents the fileSizeCheck from blocking uploads when no file error occurred.
+            */
+            $cv_file_info = ['status' => true];
+            if (isset($_FILES['cv_file_upload']) && $_FILES['cv_file_upload']['error'] === UPLOAD_ERR_OK) {
+                $cv_file_info = fileSizeCheck('cv_file_upload');
+                error_log("CV file exists and no upload error. Size check result: " . print_r($cv_file_info, true));
+            } else {
+                error_log("CV file check: isset=" . (isset($_FILES['cv_file_upload']) ? 'yes' : 'no') . 
+                         ", error=" . ($_FILES['cv_file_upload']['error'] ?? 'not set'));
+            }
+            
+            $supporting_files_info = ['status' => true];
+            if (isset($_FILES['supporting_file_upload'])) {
+                $supporting_files_info = fileSizeCheck('supporting_file_upload');
+            }
 
             // Create item in Monday.com
             if ($cv_file_info["status"] && $supporting_files_info["status"]) {
@@ -966,8 +1054,34 @@
                         
                         if ($success) echo json_encode(array('message' => 'The request has been submitted.', "reference-id" => $reference_id, "status" => "success", "code" => "cookiepie"));
                         else echo json_encode(array('message' => 'There was an error. Please try again.', 'error' => $res, "reference-id" => $reference_id, "status" => "error", "code" => "cookiebadpie"));
-                        if ($success && isset($_FILES['cv_file_upload'])) uploadToMonday($token, $res['data']['create_item']['id'], "cv_file_upload", 'upload_file__1');
-                        if ($success && isset($_FILES['supporting_file_upload'])) uploadToMonday($token, $res['data']['create_item']['id'], "supporting_file_upload", 'files__1');
+                        
+                        /*
+                            ==========================================
+                            FIX #2: CV upload with proper error checking
+                            ==========================================
+                            Added UPLOAD_ERR_OK check to ensure file was actually uploaded
+                            before attempting to send to Monday.com
+                        */
+                        // Upload CV to the "Upload your CV" column (file_mkxd1vx9)
+                        if ($success && isset($_FILES['cv_file_upload']) && $_FILES['cv_file_upload']['error'] === UPLOAD_ERR_OK) {
+                            error_log("=== STARTING CV UPLOAD TO MONDAY.COM ===");
+                            error_log("Item ID: " . $res['data']['create_item']['id']);
+                            error_log("CV File: " . print_r($_FILES['cv_file_upload'], true));
+                            $cv_result = uploadToMonday($token, $res['data']['create_item']['id'], "cv_file_upload", 'file_mkxd1vx9');
+                            error_log("CV Upload Result: " . print_r($cv_result, true));
+                            error_log("=== CV UPLOAD COMPLETE ===");
+                        } else {
+                            error_log("CV upload skipped - success: " . ($success ? 'yes' : 'no') . 
+                                     ", isset: " . (isset($_FILES['cv_file_upload']) ? 'yes' : 'no') . 
+                                     ", error: " . ($_FILES['cv_file_upload']['error'] ?? 'not set'));
+                        }
+                        
+                        // Upload supporting files to the "Supporting Files" column (files__1)
+                        if ($success && isset($_FILES['supporting_file_upload'])) {
+                            error_log("=== STARTING SUPPORTING FILES UPLOAD ===");
+                            uploadToMonday($token, $res['data']['create_item']['id'], "supporting_file_upload", 'files__1');
+                            error_log("=== SUPPORTING FILES UPLOAD COMPLETE ===");
+                        }
                     }
                 ]);
             }
