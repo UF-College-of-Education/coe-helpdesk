@@ -1,6 +1,4 @@
 <?php
-
-
     // Enable detailed error reporting for debugging purposes
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
@@ -36,6 +34,15 @@
         return;
     }
 
+    /**
+     * Verify Captcha
+     * The frontend will request a token from Google and that token gets sent with form
+     * submissions. This function sends the token back to Google to verify request and 
+     * get a score (0-1) on likelihood the request came from a bot.
+     *
+     * @param string $recaptcha_response - Token from Google
+     * @param float $threshold - Minimum score required to accept form submission.
+     */
     function verifycaptcha($recaptcha_response, $threshold = 0.5) {
         // If the reCAPTCHA response token is null, return false
         if ($recaptcha_response == NULL) {
@@ -53,7 +60,7 @@
         // reCAPTCHA Enterprise API endpoint
         $url = "https://recaptchaenterprise.googleapis.com/v1/projects/{$project_id}/assessments?key={$api_key}";
         
-        // Build event object - only include expectedAction if it's not empty
+        // Build event object to be sent to Google reCAPTCHA Enterprise API
         $event = array(
             'token' => $recaptcha_response,
             'expectedAction' => 'helpdesk_submit',
@@ -68,7 +75,7 @@
         $data = array('event' => $event);
         $json_data = json_encode($data);
 
-        // Use cURL for better error handling
+        // Send request via cURL
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -83,7 +90,7 @@
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curl_error = curl_error($ch);
         $curl_errno = curl_errno($ch);
-        curl_close($ch);
+        curl_close($ch); // Deprecated in PHP 8.0+ but will keep for now
 
         if ($response === false || $curl_errno !== 0) {
             error_log('cURL request failed');
