@@ -67,10 +67,6 @@
             'siteKey' => $site_key
         );
 
-        if (!empty($expected_action)) {
-            $event['expectedAction'] = $expected_action;
-        }
-
         // Prepare the request body
         $data = array('event' => $event);
         $json_data = json_encode($data);
